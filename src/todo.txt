@@ -1,0 +1,8 @@
+python; obrazki z projekty+wklejona sygnatura jakimś fontem; lista rzeczy + pliki pdf z naklejkami jako output
+
+- wybor od ktorego pola (wraz z informacja o numeracji pol)
+- wybor output path
+- wybór zakrewsy (półka itp) + parsowanie
+- ostrzezenie o powrórkach sygnatur [error]
+- ostrzezenie o polach putych w arkuszu [warning]
+- info ile stron z partii wychodzi [info] --> export
