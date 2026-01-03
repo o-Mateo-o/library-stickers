@@ -1,0 +1,18 @@
+{
+    "db": {
+        "path": "~/database/postulat-library-db.sqlite"
+    },
+    "design": {
+        "template": "assets/sample.template.png",
+        "font": {
+            "path": "assets/Oswald-VariableFont_wght.ttf",
+            "size": 70,
+            "color": "#000000",
+            "text-x-align": 0.4
+        },
+        "grid": {
+            "columns": 3,
+            "rows": 7
+        }
+    }
+}

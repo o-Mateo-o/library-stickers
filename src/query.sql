@@ -2,7 +2,7 @@ SELECT
     title,
     author,
     publisher,
-    callnumber
+    callnumber,
     quantity
 FROM
-    book
+    book;

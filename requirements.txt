@@ -1,1 +1,9 @@
-rich==13.4.0
+pandas>=2.3.3
+pillow>=12.1.0
+reportlab>=4.4.7
+pdf2image>=1.17.0
+# testing & linting
+pytest>=9.0.2
+pre-commit>=4.5.1
+mypy>=1.19.1
+types-reportlab>=4.4.7
