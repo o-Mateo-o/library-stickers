@@ -1,32 +1,90 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# set -e
 
-# Define the virtual environment directory
-VENV_DIR=".venv"
+# -------------------------------
+# Step 0: Detect OS & install pip/venv if missing
+# -------------------------------
+echo "🔍 Checking Python environment..."
 
-# Check if virtual environment exists, if not, create it
-if [ ! -d "$VENV_DIR" ]; then
-  echo "Creating virtual environment..."
-  python3 -m venv "$VENV_DIR"
-  echo "Virtual environment created."
-fi
-
-# Activate the virtual environment
-source "$VENV_DIR/bin/activate"
-
-# Check if requirements.txt exists
-if [ ! -f "requirements.txt" ]; then
-  echo "requirements.txt not found! Please ensure it's present in the current directory."
-  deactivate
+if [ -f /etc/os-release ]; then
+  . /etc/os-release
+else
+  echo "❌ Cannot detect OS"
   exit 1
 fi
 
-# Install the requirements if not already installed
-echo "Ensuring dependencies..."
-pip check >/dev/null 2>&1 || pip install -r requirements.txt
+# Ensure Python 3 exists
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "❌ Python 3 is not installed. Please install it first."
+  exit 1
+fi
 
-# Run the Python script with all passed arguments
-echo "Running the Python script with the provided arguments..."
+# Ensure pip is installed
+if ! python3 -m pip --version >/dev/null 2>&1; then
+  echo "⬇️  Installing pip..."
+  if [[ "$ID" == "fedora" ]]; then
+    sudo dnf install -y python3-pip
+  elif [[ "$ID" == "ubuntu" || "$ID" == "debian" ]]; then
+    sudo apt update
+    sudo apt install -y python3-pip
+  else
+    echo "❌ Unsupported OS: $ID"
+    exit 1
+  fi
+fi
+
+# Ensure venv is available
+if ! python3 -m venv --help >/dev/null 2>&1; then
+  echo "⬇️  Installing venv..."
+  if [[ "$ID" == "fedora" ]]; then
+    sudo dnf install -y python3-virtualenv
+  elif [[ "$ID" == "ubuntu" || "$ID" == "debian" ]]; then
+    sudo apt update
+    sudo apt install -y python3-venv
+  else
+    echo "❌ Unsupported OS: $ID"
+    exit 1
+  fi
+fi
+
+# -------------------------------
+# Step 1: Define the virtual environment directory
+# -------------------------------
+VENV_DIR=".venv"
+
+# -------------------------------
+# Step 2: Create venv if it doesn't exist
+# -------------------------------
+if [ ! -d "$VENV_DIR" ]; then
+  echo "Creating virtual environment..."
+  python3 -m venv "$VENV_DIR"
+  echo "✅ Virtual environment created."
+fi
+
+# -------------------------------
+# Step 3: Activate venv
+# -------------------------------
+source "$VENV_DIR/bin/activate"
+
+# -------------------------------
+# Step 4: Install dependencies from requirements.txt (quietly)
+# -------------------------------
+if [ ! -f "requirements.txt" ]; then
+  echo "❌ requirements.txt not found!"
+fi
+
+echo "Ensuring dependencies..."
+pip install --upgrade pip --quiet
+pip install -r requirements.txt --quiet
+
+
+# -------------------------------
+# Step 5: Run Python script with all passed arguments
+# -------------------------------
+echo "✅ Running the Python script."
 python3 script.py "$@"
 
-# Deactivate the virtual environment
+# -------------------------------
+# Step 6: Deactivate venv
+# -------------------------------
 deactivate
