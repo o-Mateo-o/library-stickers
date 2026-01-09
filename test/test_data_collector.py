@@ -2,7 +2,7 @@ import unittest
 
 import pandas as pd
 
-from src.aggregation import DataCollector
+from src.aggregation import DataCollectorService, DBValidationError
 
 
 class BaseDataCollectorTest(unittest.TestCase):
@@ -16,27 +16,29 @@ class BaseDataCollectorTest(unittest.TestCase):
                 "quantity": [2, 1, 3],
             }
         )
-        self.collector = DataCollector()
+        self.collector = DataCollectorService
 
 
 class TestValidateUniqueCallnumbers(BaseDataCollectorTest):
     def test_unique_callnumbers(self):
-        self.assertTrue(self.collector.validate_unique_callnumbers(self.df))
+        self.collector.validate_unique_callnumbers(self.df)
 
     def test_duplicate_callnumbers(self):
         df_dup = self.df.copy()
         df_dup.loc[1, "callnumber"] = "K5/5-001"
-        self.assertFalse(self.collector.validate_unique_callnumbers(df_dup))
+        with self.assertRaises(DBValidationError):
+            self.collector.validate_unique_callnumbers(df_dup)
 
 
 class TestValidateCallnumberFormat(BaseDataCollectorTest):
     def test_valid_callnumber_format(self):
-        self.assertTrue(self.collector.validate_callnumber_format(self.df))
+        self.collector.validate_callnumber_format(self.df)
 
     def test_invalid_callnumber_format(self):
         df_invalid = self.df.copy()
         df_invalid.loc[0, "callnumber"] = "InvalidCN"
-        self.assertFalse(self.collector.validate_callnumber_format(df_invalid))
+        with self.assertRaises(DBValidationError):
+            self.collector.validate_callnumber_format(df_invalid)
 
 
 class TestGetCallnumberList(BaseDataCollectorTest):

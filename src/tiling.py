@@ -4,12 +4,13 @@ import json
 import math
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Sequence
 
 from PIL import Image, ImageDraw, ImageFont
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 
-from src.fileutils import with_temp_dir
+from src.utils import with_temp_dir
 
 TEMP_DIR = Path(".temp")
 
@@ -95,7 +96,7 @@ class PdfCreator:
         )
 
     @with_temp_dir(TEMP_DIR)
-    def generate_pdf(self, texts: list[str | None], output: Path) -> dict[str, int]:
+    def generate_pdf(self, texts: Sequence[str | None], output: Path) -> dict[str, int]:
         canvas_ = canvas.Canvas(str(output), pagesize=self.PAGE_SIZE)
 
         layout = self._calculate_layout()
@@ -159,7 +160,7 @@ class PdfCreator:
     def _render_page(
         self,
         canvas_: canvas.Canvas,
-        texts: list[str | None],
+        texts: Sequence[str | None],
         start_idx: int,
         layout: dict[str, int | float],
         page_number: int,

@@ -14,5 +14,9 @@
             "columns": 3,
             "rows": 7
         }
+    },
+    "output-default": {
+        "excel": "~/Desktop/biblioteka-export.xlsx",
+        "pdf": "~/Desktop/biblioteka-naklejki.pdf"
     }
 }

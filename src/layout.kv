@@ -1,0 +1,169 @@
+#:kivy 2.3.0
+
+# =======================
+# STYLE GLOBALNE
+# =======================
+
+<Label>:
+    font_size: "32sp"
+    color: 0.1, 0.1, 0.1, 1
+
+<TextInput>:
+    font_size: "32sp"
+    padding: [12, 14]
+    size_hint_y: None
+    height: 40
+    background_normal: ""
+    background_active: ""
+    background_color: 1, 1, 1, 1
+    foreground_color: 0.1, 0.1, 0.1, 1
+    cursor_color: 0.2, 0.6, 0.9, 1
+
+<Button>:
+    font_size: "32sp"
+    background_normal: ""
+    background_color: 0.2, 0.6, 0.9, 1
+    color: 1, 1, 1, 1
+
+
+# =======================
+# OKRĄGŁY PRZYCISK INFO
+# =======================
+
+<InfoButton@Button>:
+    text: "i"
+    size_hint: None, None
+    size: 42, 42
+    font_size: "24sp"
+    background_color: 0, 0, 0, 0
+    canvas.before:
+        Color:
+            rgba: 0.2, 0.6, 0.9, 1
+        Ellipse:
+            pos: self.pos
+            size: self.size
+
+
+# =======================
+# FILE PICKER POPUP
+# =======================
+
+<FilePickerPopup>:
+    BoxLayout:
+        orientation: "vertical"
+        spacing: 10
+        padding: 10
+
+        FileChooserListView:
+            id: chooser
+
+        Button:
+            text: "Wybierz"
+            size_hint_y: None
+            height: 50
+
+
+# =======================
+# GŁÓWNY WIDOK
+# =======================
+
+<MainWidget>:
+    orientation: "vertical"
+    padding: 20
+    spacing: 18
+    canvas.before:
+        Color:
+            rgba: 0.95, 0.96, 0.98, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    # ---- TYTUŁ ----
+    Label:
+        text: "Generator PDF / Excel"
+        bold: True
+        size_hint_y: None
+        height: 50
+
+    # ---- POLE STARTOWE ----
+    BoxLayout:
+        orientation: "vertical"
+        size_hint_y: None
+        height: 90
+        spacing: 6
+
+        BoxLayout:
+            spacing: 8
+            size_hint_y: None
+
+            Label:
+                text: "Numer pola początkowego"
+
+            InfoButton:
+                on_release: root.show_info("asdadsa\nasdasd")
+
+        TextInput:
+            text: str(root.start_index)
+            input_filter: "int"
+            multiline: False
+            on_text: root.start_index = int(self.text) if self.text else 0
+
+    # ---- ZAPYTANIE ----
+    BoxLayout:
+        orientation: "vertical"
+        size_hint_y: None
+        height: 90
+        spacing: 6
+
+        BoxLayout:
+            spacing: 8
+            size_hint_y: None
+
+            Label:
+                text: "Zapytanie użytkownika"
+
+            InfoButton:
+                on_release: root.show_info("asdadsa\nasdasd")
+
+        TextInput:
+            id: query_input
+            multiline: False
+            hint_text: "Wpisz zapytanie..."
+
+    # ---- PDF ----
+    BoxLayout:
+        spacing: 8
+        size_hint_y: None
+        height: 50
+
+        TextInput:
+            text: root.pdf_path_str
+            readonly: True
+
+        Button:
+            text: "PDF"
+            size_hint_x: None
+            width: 90
+            on_release: root.open_file_picker("pdf")
+
+    # ---- XLSX ----
+    BoxLayout:
+        spacing: 8
+        size_hint_y: None
+        height: 50
+
+        TextInput:
+            text: root.xlsx_path_str
+            readonly: True
+
+        Button:
+            text: "XLSX"
+            size_hint_x: None
+            width: 90
+            on_release: root.open_file_picker("xlsx")
+
+    # ---- GENERUJ ----
+    Button:
+        text: "Generuj pliki"
+        size_hint_y: None
+        height: 60

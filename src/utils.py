@@ -3,7 +3,13 @@ from functools import update_wrapper
 from pathlib import Path
 from typing import Callable, TypeVar
 
+from functools import wraps
+from typing import Callable, TypeVar, ParamSpec
 from typing_extensions import ParamSpec
+
+
+class AppError(Exception): ...
+
 
 P = ParamSpec("P")
 R = TypeVar("R")
@@ -30,3 +36,17 @@ def with_temp_dir(temp_dir: Path) -> Callable[[Callable[P, R]], Callable[P, R]]:
         return update_wrapper(wrapper, func)
 
     return decorator
+
+
+def arg_tuple_not_none(func: Callable[P, bool]) -> Callable[P, bool]:
+    @wraps(func)
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> bool:
+        if len(args) < 2 or not isinstance(args[1], tuple):
+            raise TypeError("Expected an instance method with one tuple argument")
+
+        if any(x is None for x in args[1]):
+            return False
+
+        return func(*args, **kwargs)
+
+    return wrapper
