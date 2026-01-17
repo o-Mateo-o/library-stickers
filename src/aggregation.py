@@ -151,12 +151,12 @@ class CallnumberRangeCondition(Condition):
 
 
 class CallnumberFilteringService:
-    # FIXME: get_conditions jako osobna funkcja a w poniższej jako parametr zamiast inputa;
-    # cel: separacja w ostatecznym uzyciu metody
+    # TODO: get_conditions could be a separate function
+    # to first check if the query is valid and then load the dataset
     @classmethod
-    def filter(cls, df: pd.DataFrame, input: str) -> pd.DataFrame:
-        input = input.upper()
-        conditions = cls._decompose_input(input)
+    def filter(cls, df: pd.DataFrame, query: str) -> pd.DataFrame:
+        query = query.strip().upper()
+        conditions = cls._decompose_query(query)
         df = pd.concat([df, cls._parse_df_callnumber(df)], axis=1)
         df["_result"] = df[list(CallnumberTuple._fields)].apply(
             partial(cls.apply_conditions, conditions), axis=1
@@ -164,8 +164,8 @@ class CallnumberFilteringService:
         return df[df["_result"] == True]
 
     @staticmethod
-    def _decompose_input(input: str) -> list[Condition]:
-        parts = input.split(INPUT_PARTS_SEPARATOR)
+    def _decompose_query(query: str) -> list[Condition]:
+        parts = query.split(INPUT_PARTS_SEPARATOR)
         conditions: list[Condition] = []
         for part in parts:
             part_elements = list(filter(None, part.split(INPUT_RANGE_SEPARATOR)))
@@ -209,7 +209,7 @@ class DataCollectorService:
     @staticmethod
     def get_data(config_path: Path) -> pd.DataFrame:
         with SQLiteClient(config_path) as db:
-            books_df = db.dataframe_from_sql_file("src/query.sql")
+            books_df = db.dataframe_from_sql_file("src/basequery.sql")
         return books_df
 
     @staticmethod
@@ -229,9 +229,9 @@ class DataCollectorService:
             )
 
     @staticmethod
-    def filter_data(df: pd.DataFrame, input: str) -> pd.DataFrame:
+    def filter_data(df: pd.DataFrame, query: str) -> pd.DataFrame:
         """A simplified filtering solution; works fast only with small databases"""
-        return CallnumberFilteringService.filter(df, input)
+        return CallnumberFilteringService.filter(df, query)
 
     @staticmethod
     def get_callnumber_list(df: pd.DataFrame) -> list[str]:

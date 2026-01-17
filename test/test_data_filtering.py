@@ -144,13 +144,13 @@ class TestCallnumberFilteringService(unittest.TestCase):
             ("A11/2-002;B1/2-002--B2/1-010", 2),
         ],
     )
-    def test_decompose_input_valid(self, input_text, expected_count):
-        conditions = CallnumberFilteringService._decompose_input(input_text)
+    def test_decompose_query_valid(self, query_text, expected_count):
+        conditions = CallnumberFilteringService._decompose_query(query_text)
         self.assertEqual(len(conditions), expected_count)
 
-    def test_decompose_input_invalid(self):
+    def test_decompose_query_invalid(self):
         with self.assertRaises(CallnumberParseError):
-            CallnumberFilteringService._decompose_input(
+            CallnumberFilteringService._decompose_query(
                 "A11/2-002--A13/2-002--A14/2-002"
             )
 
@@ -158,9 +158,9 @@ class TestCallnumberFilteringService(unittest.TestCase):
     def test_apply_conditions_mocked(self, mock_tuple):
         mock_condition = MagicMock()
         mock_condition.assess.return_value = True
-
+        mock_cols_obj = pd.Series(("A", 1, 2, 3))
         result = CallnumberFilteringService.apply_conditions(
-            [mock_condition], (("A", 1, 2, 3),)
+            [mock_condition], mock_cols_obj
         )
 
         self.assertTrue(result)
@@ -169,7 +169,7 @@ class TestCallnumberFilteringService(unittest.TestCase):
 
 class TestCallnumberFilteringServiceFilter(unittest.TestCase):
 
-    @patch.object(CallnumberFilteringService, "_decompose_input")
+    @patch.object(CallnumberFilteringService, "_decompose_query")
     @patch.object(CallnumberFilteringService, "_parse_df_callnumber")
     @patch.object(CallnumberFilteringService, "apply_conditions")
     def test_filter_method(

@@ -38,9 +38,11 @@ if ! python3 -m venv --help >/dev/null 2>&1; then
   echo "⬇️  Installing venv..."
   if [[ "$ID" == "fedora" ]]; then
     sudo dnf install -y python3-virtualenv
+    sudo dnf install python3-gobject gtk4 libadwaita
   elif [[ "$ID" == "ubuntu" || "$ID" == "debian" ]]; then
     sudo apt update
     sudo apt install -y python3-venv
+    sudo apt install python3-gi gir1.2-gtk-4.0 gir1.2-adw-1
   else
     echo "❌ Unsupported OS: $ID"
     exit 1
@@ -57,7 +59,7 @@ VENV_DIR=".venv"
 # -------------------------------
 if [ ! -d "$VENV_DIR" ]; then
   echo "Creating virtual environment..."
-  python3 -m venv "$VENV_DIR"
+  python3 -m venv "$VENV_DIR" --system-site-packages
   echo "✅ Virtual environment created."
 fi
 

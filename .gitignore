@@ -172,6 +172,7 @@ cython_debug/
 
 # Custom
 .temp/
+*.temp
 .vscode/
 output*
 src/_debug.py

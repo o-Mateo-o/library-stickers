@@ -58,6 +58,15 @@ class DesignConfig:
         self.start_row = row
         self.start_col = col
 
+    def set_initial_cell_ordinal(self, ordinal: int) -> None:
+        row = (ordinal - 1) // self.grid_columns + 1
+        col = (ordinal - 1) % self.grid_columns + 1
+        self.set_initial_cell(row, col)
+
+    @property
+    def max_cell_ordinal(self) -> int:
+        return self.grid_columns * self.grid_rows
+
 
 class PdfCreator:
     PAGE_SIZE = A4

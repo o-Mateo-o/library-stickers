@@ -1,10 +1,8 @@
 import shutil
-from functools import update_wrapper
+from functools import update_wrapper, wraps
 from pathlib import Path
-from typing import Callable, TypeVar
+from typing import Callable, ParamSpec, Type, TypeVar
 
-from functools import wraps
-from typing import Callable, TypeVar, ParamSpec
 from typing_extensions import ParamSpec
 
 
@@ -50,3 +48,36 @@ def arg_tuple_not_none(func: Callable[P, bool]) -> Callable[P, bool]:
         return func(*args, **kwargs)
 
     return wrapper
+
+
+def errordialog(
+    *exceptions: Type[Exception],
+) -> Callable[[Callable[P, R]], Callable[P, R | None]]:
+    """
+    Decorator that catches the specified exceptions from the decorated function
+    and calls `parent.show_error(message)`.
+
+    Assumes the first argument (`parent`) has a `show_error(str)` method.
+    """
+
+    def decorator(func: Callable[P, R]) -> Callable[P, R | None]:
+        @wraps(func)
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> R | None:
+            if not args:
+                raise TypeError(
+                    "Expected the first argument to be 'parent' with show_error method"
+                )
+            parent = args[0]
+            try:
+                return func(*args, **kwargs)
+            except exceptions as e:
+                # type ignore because we trust parent has show_error
+                parent.show_error(str(e))  # type: ignore[attr-defined]
+                return None
+            except Exception as e:
+                parent.show_error(f"Niezidentyfikowany błąd: {str(e)}")  # type: ignore[attr-defined]
+                return None
+
+        return wrapper
+
+    return decorator
