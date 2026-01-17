@@ -211,7 +211,7 @@ class MainWindow(Adw.ApplicationWindow):
         dialog: Adw.MessageDialog = Adw.MessageDialog(
             transient_for=self,
             modal=True,
-            heading=title,
+            heading=f"{title} (Esc)",
             body=message,
         )
 

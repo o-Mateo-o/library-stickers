@@ -41,7 +41,7 @@ def process(parent: MainWindow) -> None:
     # generate files
     info = pdf_creator.generate_pdf(contents, parent.pdf_path)
     dcs.get_excel_export(filtered_data, parent.excel_path)
-    
+
     # info
     parent.show_info(
         "Wygenerowano pliki",
