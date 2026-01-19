@@ -12,7 +12,7 @@ class BasePdfTest(unittest.TestCase):
             font_path="fake_font.ttf",
             font_size=20,
             text_color="xxx",
-            text_x_align=0.5,
+            text_y_align=0.5,
             grid_columns=3,
             grid_rows=3,
         )

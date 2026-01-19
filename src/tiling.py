@@ -22,7 +22,9 @@ class DesignConfig:
     font_path: str
     font_size: int
     text_color: str
-    text_x_align: float
+    text_y_align: float
+    # NOTE:LAYOUT: if the template has horizontal, not vertical orientation,
+    # change `text_y_align` to `text_x_align` and modify `_fill_sticker_template`
 
     grid_columns: int
     grid_rows: int
@@ -49,7 +51,7 @@ class DesignConfig:
             font_path=font["path"],
             font_size=font.get("size", 80),
             text_color=font.get("color", "#000000"),
-            text_x_align=font.get("text-x-align", 0.5),
+            text_y_align=font.get("text-y-align", 0.5),
             grid_columns=grid.get("columns", 3),
             grid_rows=grid.get("rows", 7),
         )
@@ -97,11 +99,11 @@ class PdfCreator:
         img_width, img_height = template_img.size
         draw = ImageDraw.Draw(template_img)
         draw.text(
-            (int(img_width * self.config.text_x_align), img_height // 2),
+            (img_width // 2, int(img_height * self.config.text_y_align)),
             text,
             fill=self.config.text_color,
             font=self.font,
-            anchor="lm",  # left-middle
+            anchor="mt",  # middle-top
         )
 
     @with_temp_dir(TEMP_DIR)
