@@ -5,14 +5,18 @@
     "design": {
         "template": "assets/sample.template.png",
         "font": {
-            "path": "assets/Oswald-VariableFont_wght.ttf",
-            "size": 70,
+            "path": "assets/SpecialGothicExpandedOne-Regular.ttf",
+            "size": 90,
             "color": "#000000",
-            "text-x-align": 0.4
+            "text-y-align": 0.65
         },
         "grid": {
             "columns": 3,
             "rows": 7
         }
+    },
+    "output-default": {
+        "excel": "~/Desktop/biblioteka-export.xlsx",
+        "pdf": "~/Desktop/biblioteka-naklejki.pdf"
     }
 }

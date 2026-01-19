@@ -4,12 +4,13 @@ import json
 import math
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Sequence
 
 from PIL import Image, ImageDraw, ImageFont
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 
-from src.fileutils import with_temp_dir
+from src.utils import with_temp_dir
 
 TEMP_DIR = Path(".temp")
 
@@ -21,7 +22,9 @@ class DesignConfig:
     font_path: str
     font_size: int
     text_color: str
-    text_x_align: float
+    text_y_align: float
+    # NOTE:LAYOUT: if the template has horizontal, not vertical orientation,
+    # change `text_y_align` to `text_x_align` and modify `_fill_sticker_template`
 
     grid_columns: int
     grid_rows: int
@@ -48,7 +51,7 @@ class DesignConfig:
             font_path=font["path"],
             font_size=font.get("size", 80),
             text_color=font.get("color", "#000000"),
-            text_x_align=font.get("text-x-align", 0.5),
+            text_y_align=font.get("text-y-align", 0.5),
             grid_columns=grid.get("columns", 3),
             grid_rows=grid.get("rows", 7),
         )
@@ -56,6 +59,15 @@ class DesignConfig:
     def set_initial_cell(self, row: int, col: int) -> None:
         self.start_row = row
         self.start_col = col
+
+    def set_initial_cell_ordinal(self, ordinal: int) -> None:
+        row = (ordinal - 1) // self.grid_columns + 1
+        col = (ordinal - 1) % self.grid_columns + 1
+        self.set_initial_cell(row, col)
+
+    @property
+    def max_cell_ordinal(self) -> int:
+        return self.grid_columns * self.grid_rows
 
 
 class PdfCreator:
@@ -87,15 +99,15 @@ class PdfCreator:
         img_width, img_height = template_img.size
         draw = ImageDraw.Draw(template_img)
         draw.text(
-            (int(img_width * self.config.text_x_align), img_height // 2),
+            (img_width // 2, int(img_height * self.config.text_y_align)),
             text,
             fill=self.config.text_color,
             font=self.font,
-            anchor="lm",  # left-middle
+            anchor="mt",  # middle-top
         )
 
     @with_temp_dir(TEMP_DIR)
-    def generate_pdf(self, texts: list[str | None], output: Path) -> dict[str, int]:
+    def generate_pdf(self, texts: Sequence[str | None], output: Path) -> dict[str, int]:
         canvas_ = canvas.Canvas(str(output), pagesize=self.PAGE_SIZE)
 
         layout = self._calculate_layout()
@@ -159,7 +171,7 @@ class PdfCreator:
     def _render_page(
         self,
         canvas_: canvas.Canvas,
-        texts: list[str | None],
+        texts: Sequence[str | None],
         start_idx: int,
         layout: dict[str, int | float],
         page_number: int,

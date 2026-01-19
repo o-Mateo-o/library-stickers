@@ -19,7 +19,7 @@ class SQLiteClient:
         db_path_str = data.get("db", {}).get("path")
         if not db_path_str:
             raise ValueError("Database path not found in the provided JSON file.")
-        return Path(db_path_str)
+        return Path(db_path_str).expanduser()
 
     def connect(self) -> None:
         if not self.db_path:
