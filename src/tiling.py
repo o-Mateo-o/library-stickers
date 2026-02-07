@@ -66,6 +66,10 @@ class DesignConfig:
         self.set_initial_cell(row, col)
 
     @property
+    def initall_cell_oridinal(self) -> int:
+        return self.grid_columns * (self.start_row - 1) + self.start_col
+
+    @property
     def max_cell_ordinal(self) -> int:
         return self.grid_columns * self.grid_rows
 
@@ -147,18 +151,17 @@ class PdfCreator:
     def _calculate_total_pages(
         self, total_stickers: int, layout: dict[str, int | float]
     ) -> int:
+        _blank_cells = self.config.initall_cell_oridinal - 1
+        total_cells = total_stickers + _blank_cells
         if per_page := layout.get("per_page"):
-            return math.ceil(total_stickers / per_page)
+            return math.ceil(total_cells / per_page)
         return 0
 
     def _calculate_left_last_page(
         self, total_stickers: int, total_pages: int, layout: dict[str, int | float]
     ) -> int:
-        _start_row = self.config.start_row - 1
-        _start_col = self.config.start_col - 1
-
-        skipped = _start_row * layout["cols"] + _start_col
-        first_page_capacity = layout["per_page"] - skipped
+        _blank_cells = self.config.initall_cell_oridinal - 1
+        first_page_capacity = layout["per_page"] - _blank_cells
 
         if total_pages == 1:
             return int(first_page_capacity - total_stickers)

@@ -2,7 +2,34 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+from parameterized import parameterized
+
 from src.tiling import DesignConfig, PdfCreator
+
+
+class TestDesignConfig(unittest.TestCase):
+    def setUp(self):
+        self.config = DesignConfig(
+            template_path="fake_template.png",
+            font_path="fake_font.ttf",
+            font_size=20,
+            text_color="xxx",
+            text_y_align=0.5,
+            grid_columns=3,
+            grid_rows=3,
+        )
+
+    @parameterized.expand(
+        [
+            (1, 1, 1),
+            (1, 2, 2),
+            (2, 1, 4),
+            (2, 3, 6),
+        ],
+    )
+    def test_init_cell_oridinal(self, start_row, start_column, expected):
+        self.config.set_initial_cell(start_row, start_column)
+        self.assertEqual(expected, self.config.initall_cell_oridinal)
 
 
 class BasePdfTest(unittest.TestCase):

@@ -31,6 +31,8 @@ Przykłady poprawnych zapytań to: 'B1', 'K1/2-003', 'K1/2-002--K2/3-004', 'K2/3
 'B1/2;K1;B2/2-002'
 """
 
+TITLE = "Generator Naklejek Bibliotecznych"
+
 
 def _add_info_icon(row: Adw.ActionRow, text: str) -> None:
     info_button: Gtk.Button = Gtk.Button()
@@ -50,7 +52,7 @@ class MainWindow(Adw.ApplicationWindow):
         super().__init__(application=app)
 
         # header
-        self.set_title("Generator Naklejek Bibliotecznych")
+        self.set_title(TITLE)
         self.set_default_size(700, 420)
         content: Adw.Clamp = Adw.Clamp(margin_top=24, margin_bottom=24)
         self.set_content(content)
@@ -58,7 +60,7 @@ class MainWindow(Adw.ApplicationWindow):
         content.set_child(box)
 
         # title
-        title_label: Gtk.Label = Gtk.Label(label="Generator Nakelejek Bibliotecznych")
+        title_label: Gtk.Label = Gtk.Label(label=TITLE)
         title_label.set_xalign(0.5)
         title_label.add_css_class("title-1")
         title_label.set_margin_bottom(16)
